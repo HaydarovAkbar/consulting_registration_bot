@@ -61,3 +61,19 @@ class Reklama(models.Model):
 
     def __str__(self):
         return self.text
+
+
+# class Registration(models.Model):
+#     fullname = models.CharField(max_length=100, null=True)
+#     age = models.IntegerField(default=0, null=True)
+#     phone = models.CharField(max_length=20, null=True)
+#     level = models.CharField(max_length=30, null=True)
+#     country = models.ForeignKey(Country, on_delete=models.CASCADE, null=True, related_name='registration')
+#
+#     chat_id = models.CharField(max_length=100, null=True)
+#     username = models.CharField(max_length=100, null=True)
+#
+#     created_at = models.DateTimeField(auto_now_add=True)
+#
+#     def __str__(self):
+#         return self.name

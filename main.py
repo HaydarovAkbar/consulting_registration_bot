@@ -17,8 +17,11 @@ TOKEN = config('TOKEN')
 from telegram import Update, ForceReply, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackContext, Filters, ConversationHandler
 from methods.core.views import start, get_fullname, get_age, get_phone, get_level, get_country
-from methods.admin.views import admin
+from methods.admin.views import admin, add_admin, add_admin_succesfuly, del_admin, del_admin_confirm, back, message, \
+    message_text, message_text_confirm, message_photo, message_photo_confirm, message_location, message_location_confirm, \
+    add_country, add_country_icon, add_country_confirm
 from states import States as st
+from methods.dictionary import AdminKeyboardMessage as adm_msg
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -49,6 +52,72 @@ handler = ConversationHandler(
         st.get_country: [
             CommandHandler('start', start),
             CommandHandler('admin', admin), MessageHandler(Filters.text, get_country)],
+        st.admin_menu: [
+            CommandHandler('start', start),
+            CommandHandler('admin', admin),
+            MessageHandler(Filters.regex('^' + adm_msg.base[0] + '$'), add_admin),
+            MessageHandler(Filters.regex('^' + adm_msg.base[1] + '$'), del_admin),
+            MessageHandler(Filters.regex('^' + adm_msg.base[2] + '$'), message),
+            MessageHandler(Filters.regex('^' + adm_msg.base[3] + '$'), admin),
+            MessageHandler(Filters.regex('^' + adm_msg.base[4] + '$'), add_country),
+
+            MessageHandler(Filters.regex('^' + adm_msg.back[0] + '$'), back),
+        ],
+
+        st.add_admin: [
+            CommandHandler('start', start),
+            CommandHandler('admin', admin),
+            MessageHandler(Filters.regex('^' + adm_msg.back[0] + '$'), back),
+            MessageHandler(Filters.text, add_admin_succesfuly),
+        ],
+
+        st.del_admin: [
+            CommandHandler('start', start),
+            CommandHandler('admin', admin),
+            MessageHandler(Filters.regex('^' + adm_msg.back[0] + '$'), back),
+            MessageHandler(Filters.text, del_admin_confirm),
+        ],
+
+        st.message: [
+            CommandHandler('start', start),
+            CommandHandler('admin', admin),
+            MessageHandler(Filters.regex('^' + adm_msg.message[0] + '$'), message_text),
+            MessageHandler(Filters.regex('^' + adm_msg.message[1] + '$'), message_photo),
+            MessageHandler(Filters.regex('^' + adm_msg.message[2] + '$'), message_location),
+            MessageHandler(Filters.regex('^' + adm_msg.message[3] + '$'), back),
+        ],
+
+        st.message_text: [
+            CommandHandler('start', start),
+            CommandHandler('admin', admin),
+            MessageHandler(Filters.regex('^' + adm_msg.back[0] + '$'), back),
+            MessageHandler(Filters.text, message_text_confirm),
+        ],
+        st.message_photo: [
+            CommandHandler('start', start),
+            CommandHandler('admin', admin),
+            MessageHandler(Filters.regex('^' + adm_msg.back[0] + '$'), back),
+            MessageHandler(Filters.photo, message_photo_confirm),
+        ],
+        st.message_location: [
+            CommandHandler('start', start),
+            CommandHandler('admin', admin),
+            MessageHandler(Filters.regex('^' + adm_msg.back[0] + '$'), back),
+            MessageHandler(Filters.location, message_location_confirm),
+        ],
+
+        st.add_country: [
+            CommandHandler('start', start),
+            CommandHandler('admin', admin),
+            MessageHandler(Filters.regex('^' + adm_msg.back[0] + '$'), back),
+            MessageHandler(Filters.text, add_country_icon),
+        ],
+        st.add_country_icon: [
+            CommandHandler('start', start),
+            CommandHandler('admin', admin),
+            MessageHandler(Filters.regex('^' + adm_msg.back[0] + '$'), back),
+            MessageHandler(Filters.text, add_country_confirm),
+        ],
     },
     fallbacks=[CommandHandler('start', start),
                CommandHandler('admin', admin), ]
@@ -57,5 +126,5 @@ handler = ConversationHandler(
 app.add_handler(handler=handler)
 
 update.start_polling()
-update.idle()
 print('started polling')
+update.idle()
