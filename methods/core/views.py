@@ -3,14 +3,13 @@ import time
 from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import CallbackContext
 from states import States as st
-from db.models import User, Country
+from db.models import User, Country, Message
 from decouple import config
 
 CHANNEL_ID = config('CHANNEL_ID')
 
 
 def start(update: Update, context: CallbackContext):
-    print(update.message)
     update.message.reply_html(text="<b>Ism Familiyangizni kiriting:</b>")
     return st.get_fullname
 
@@ -40,7 +39,8 @@ def country_keyboard():
     all_country = Country.objects.all()
     keyboard = []
     for i in range(len(all_country)):
-        keyboard.append([InlineKeyboardButton(text=all_country[i].name, callback_data=str(all_country[i].id))])
+        keyboard.append([InlineKeyboardButton(text=all_country[i].icon + " " + all_country[i].name,
+                                              callback_data=str(all_country[i].id))])
     return InlineKeyboardMarkup(keyboard)
 
 
@@ -59,20 +59,28 @@ def get_country(update: Update, context: CallbackContext):
         phone=context.user_data['phone'],
         level=context.user_data['level'],
         country=country,
-        chat_id=update.message.chat_id,
-        username=update.message.from_user.username
+        chat_id=update.effective_user.id,
+        username=update.effective_user.username
     )
     channel_msg = f"""
 #{user_db.id}
-Ismi: {context.user_data['fullname']}
-Yoshi: {context.user_data['age']}
-Raqami: {context.user_data['phone']}
-Darajasi: {context.user_data['level']}
-Davlat: {country.icon} {country.name}
+<b>Ismi: <code>{context.user_data['fullname']}</code>
+Yoshi: <code>{context.user_data['age']}</code>
+Raqami: <code>{context.user_data['phone']}</code>
+Darajasi: <code>{context.user_data['level']}</code>
+Davlat: <code>{country.icon} {country.name}</code></b>
 --------------------------
 """
-    context.bot.send_message(chat_id=CHANNEL_ID, text=channel_msg)
+    context.bot.send_message(chat_id=CHANNEL_ID, text=channel_msg, parse_mode="HTML")
     time.sleep(0.4)
-    context.bot.send_message(chat_id=update.effective_user.id, text="<b>Ma'lumotlaringiz jo'natildi</b>",
-                             parse_mode="HTML")
+    last_msg = Message.objects.last()
+    if last_msg.text:
+        query.edit_message_text(text=last_msg.text)
+    else:
+        query.edit_message_text(text="<b>Ma'lumotlaringiz jo'natildi</b>", parse_mode="HTML")
+    context.user_data.clear()
+    context.bot.send_location(chat_id=update.effective_user.id, latitude=last_msg.latitude,
+                              longitude=last_msg.longitude)
+    time.sleep(0.1)
+    context.bot.send_photo(chat_id=update.effective_user.id, photo=last_msg.photo)
     return st.menu

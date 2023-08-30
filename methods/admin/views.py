@@ -159,3 +159,17 @@ def add_country_confirm(update: Update, context: CallbackContext):
     )
     update.message.reply_html(text="<b>Davlat muvaffaqiyatli qo'shildi!</b>", reply_markup=adm_key.base())
     return st.admin_menu
+
+
+def reklama(update: Update, context: CallbackContext):
+    update.message.reply_html(text="<b>Reklama xabarini yuboring:</b>", reply_markup=adm_key.back())
+    return st.reklama
+
+
+def send_rek_all_users(update: Update, context: CallbackContext):
+    text = update.message.text
+    for user in User.objects.all():
+        update.message.copy(chat_id=user.chat_id, text=text)
+    Reklama.objects.create(text=text)
+    update.message.reply_html(text="<b>Reklama muvaffaqiyatli yuborildi!</b>", reply_markup=adm_key.base())
+    return st.admin_menu

@@ -22,3 +22,5 @@ class States:
 
     add_country = 18
     add_country_icon = 19
+
+    reklama = 20

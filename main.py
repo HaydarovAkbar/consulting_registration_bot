@@ -10,16 +10,14 @@ import django
 django.setup()
 from decouple import config
 # Import your models for use in your script
-from db.models import *
 import logging
 
 TOKEN = config('TOKEN')
-from telegram import Update, ForceReply, ReplyKeyboardMarkup, ReplyKeyboardRemove
-from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackContext, Filters, ConversationHandler, CallbackQueryHandler
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler, CallbackQueryHandler
 from methods.core.views import start, get_fullname, get_age, get_phone, get_level, get_country
 from methods.admin.views import admin, add_admin, add_admin_succesfuly, del_admin, del_admin_confirm, back, message, \
     message_text, message_text_confirm, message_photo, message_photo_confirm, message_location, message_location_confirm, \
-    add_country, add_country_icon, add_country_confirm
+    add_country, add_country_icon, add_country_confirm, reklama
 from states import States as st
 from methods.dictionary import AdminKeyboardMessage as adm_msg
 
@@ -59,7 +57,7 @@ handler = ConversationHandler(
             MessageHandler(Filters.regex('^' + adm_msg.base[0] + '$'), add_admin),
             MessageHandler(Filters.regex('^' + adm_msg.base[1] + '$'), del_admin),
             MessageHandler(Filters.regex('^' + adm_msg.base[2] + '$'), message),
-            MessageHandler(Filters.regex('^' + adm_msg.base[3] + '$'), admin),
+            MessageHandler(Filters.regex('^' + adm_msg.base[3] + '$'), reklama),
             MessageHandler(Filters.regex('^' + adm_msg.base[4] + '$'), add_country),
 
             MessageHandler(Filters.regex('^' + adm_msg.back[0] + '$'), back),
