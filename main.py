@@ -15,7 +15,7 @@ import logging
 
 TOKEN = config('TOKEN')
 from telegram import Update, ForceReply, ReplyKeyboardMarkup, ReplyKeyboardRemove
-from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackContext, Filters, ConversationHandler
+from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackContext, Filters, ConversationHandler, CallbackQueryHandler
 from methods.core.views import start, get_fullname, get_age, get_phone, get_level, get_country
 from methods.admin.views import admin, add_admin, add_admin_succesfuly, del_admin, del_admin_confirm, back, message, \
     message_text, message_text_confirm, message_photo, message_photo_confirm, message_location, message_location_confirm, \
@@ -51,7 +51,8 @@ handler = ConversationHandler(
             CommandHandler('admin', admin), MessageHandler(Filters.text, get_level)],
         st.get_country: [
             CommandHandler('start', start),
-            CommandHandler('admin', admin), MessageHandler(Filters.text, get_country)],
+            CommandHandler('admin', admin),
+            CallbackQueryHandler(get_country)],
         st.admin_menu: [
             CommandHandler('start', start),
             CommandHandler('admin', admin),

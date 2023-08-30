@@ -10,7 +10,7 @@ CHANNEL_ID = config('CHANNEL_ID')
 
 
 def start(update: Update, context: CallbackContext):
-    # await User.objects.get_or_create(chat_id=update.message.chat_id)
+    print(update.message)
     update.message.reply_html(text="<b>Ism Familiyangizni kiriting:</b>")
     return st.get_fullname
 
