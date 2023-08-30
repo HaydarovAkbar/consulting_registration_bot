@@ -6,3 +6,5 @@ class States:
     get_age = 4
     get_level = 5
     get_country = 6
+
+    admin_menu = 7
