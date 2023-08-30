@@ -17,7 +17,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Conve
 from methods.core.views import start, get_fullname, get_age, get_phone, get_level, get_country
 from methods.admin.views import admin, add_admin, add_admin_succesfuly, del_admin, del_admin_confirm, back, message, \
     message_text, message_text_confirm, message_photo, message_photo_confirm, message_location, message_location_confirm, \
-    add_country, add_country_icon, add_country_confirm, reklama
+    add_country, add_country_icon, add_country_confirm, reklama, send_rek_all_users
 from states import States as st
 from methods.dictionary import AdminKeyboardMessage as adm_msg
 
@@ -116,6 +116,13 @@ handler = ConversationHandler(
             CommandHandler('admin', admin),
             MessageHandler(Filters.regex('^' + adm_msg.back[0] + '$'), back),
             MessageHandler(Filters.text, add_country_confirm),
+        ],
+
+        st.reklama: [
+            CommandHandler('start', start),
+            CommandHandler('admin', admin),
+            MessageHandler(Filters.regex('^' + adm_msg.back[0] + '$'), back),
+            MessageHandler(Filters.all, send_rek_all_users),
         ],
     },
     fallbacks=[CommandHandler('start', start),

@@ -167,9 +167,12 @@ def reklama(update: Update, context: CallbackContext):
 
 
 def send_rek_all_users(update: Update, context: CallbackContext):
-    text = update.message.text
+    counter = 0
     for user in User.objects.all():
-        update.message.copy(chat_id=user.chat_id, text=text)
-    Reklama.objects.create(text=text)
-    update.message.reply_html(text="<b>Reklama muvaffaqiyatli yuborildi!</b>", reply_markup=adm_key.base())
+        update.message.copy(chat_id=user.chat_id)
+        counter += 1
+    all_user_count = User.objects.all().count()
+    update.message.reply_html(
+        text=f"<b>Reklama muvaffaqiyatli yuborildi! </b>    Aktivlar soni: {counter}, Barchasi: {all_user_count}",
+        reply_markup=adm_key.base())
     return st.admin_menu

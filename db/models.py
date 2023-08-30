@@ -61,3 +61,12 @@ class Reklama(models.Model):
 
     def __str__(self):
         return self.text
+
+
+class ChannelMessage(models.Model):
+    message_id = models.IntegerField(null=True)
+    text = models.TextField(null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.text

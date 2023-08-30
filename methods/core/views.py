@@ -3,7 +3,7 @@ import time
 from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import CallbackContext
 from states import States as st
-from db.models import User, Country, Message
+from db.models import User, Country, Message, ChannelMessage
 from decouple import config
 
 CHANNEL_ID = config('CHANNEL_ID')
@@ -53,17 +53,31 @@ def get_level(update: Update, context: CallbackContext):
 def get_country(update: Update, context: CallbackContext):
     query = update.callback_query
     country = Country.objects.get(id=query.data)
-    user_db = User.objects.create(
-        fullname=context.user_data['fullname'],
-        age=context.user_data['age'],
-        phone=context.user_data['phone'],
-        level=context.user_data['level'],
-        country=country,
-        chat_id=update.effective_user.id,
-        username=update.effective_user.username
-    )
+    if not User.objects.filter(chat_id=update.effective_user.id).exists():
+        User.objects.create(
+            fullname=context.user_data['fullname'],
+            age=context.user_data['age'],
+            phone=context.user_data['phone'],
+            level=context.user_data['level'],
+            country=country,
+            chat_id=update.effective_user.id,
+            username=update.effective_user.username
+        )
+    last_msg = ChannelMessage.objects.last()
+    if last_msg:
+        counter = last_msg.message_id + 1
+    else:
+        counter = 1
+    ChannelMessage.objects.create(message_id=counter, text=f"""
+#{update.effective_user.id}
+Ismi: {context.user_data['fullname']}
+Yoshi: {context.user_data['age']}
+Raqami: {context.user_data['phone']}
+Darajasi: {context.user_data['level']}
+Davlat: {country.icon} {country.name}
+""")
     channel_msg = f"""
-#{user_db.id}
+#{counter}
 <b>Ismi: <code>{context.user_data['fullname']}</code>
 Yoshi: <code>{context.user_data['age']}</code>
 Raqami: <code>{context.user_data['phone']}</code>
