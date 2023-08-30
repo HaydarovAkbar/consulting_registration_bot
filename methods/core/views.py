@@ -25,11 +25,15 @@ def get_age(update: Update, context: CallbackContext):
         update.message.reply_html(text="<b>Yoshingizni raqamda kiriting:</b>")
         return st.get_age
     context.user_data['age'] = update.message.text
-    update.message.reply_html(text="<b>Telefon raqamingizni qoldiring:</b>")
+    update.message.reply_html(text="<b>Telefon raqamingizni qoldiring:</b>\n\n(Namuna: +998901234567)")
     return st.get_phone
 
 
 def get_phone(update: Update, context: CallbackContext):
+    msg = update.message.text
+    if not msg.startswith('+') or not msg[1:].isdigit():
+        update.message.reply_html(text="<b>Telefon raqamingizni xato kiritildi:\n\n(Namuna +998901234567)</b>")
+        return st.get_phone
     context.user_data['phone'] = update.message.text
     update.message.reply_html(text="<b>IELTS & Ingliz tili darajangizni yozing: (IELTS, Duolingo yoki TOEFL):</b>")
     return st.get_level
