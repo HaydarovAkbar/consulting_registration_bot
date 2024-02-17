@@ -70,3 +70,12 @@ class ChannelMessage(models.Model):
 
     def __str__(self):
         return self.text
+
+
+class GroupMessages(models.Model):
+    message_id = models.IntegerField(null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.message_id

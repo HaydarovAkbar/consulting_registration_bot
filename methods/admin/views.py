@@ -1,8 +1,11 @@
 from telegram import Update
 from telegram.ext import CallbackContext
 from states import States as st
-from db.models import User, Admin, Message, Country, Reklama
+from db.models import User, Admin, Message, Country, Reklama, GroupMessages
 from methods.admin.keyboards import AdminKeyboards as adm_key
+from decouple import config
+
+R_CHANNEL_ID = config('GROUP_ID')
 
 
 def admin(update: Update, context: CallbackContext):
@@ -168,6 +171,8 @@ def reklama(update: Update, context: CallbackContext):
 
 def send_rek_all_users(update: Update, context: CallbackContext):
     counter = 0
+    message_id = update.message.copy(R_CHANNEL_ID).message_id
+    GroupMessages.objects.create(message_id=message_id)
     for user in User.objects.all():
         update.message.copy(chat_id=user.chat_id)
         counter += 1

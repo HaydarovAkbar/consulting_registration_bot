@@ -3,10 +3,22 @@ import time
 from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import CallbackContext
 from states import States as st
-from db.models import User, Country, Message, ChannelMessage
+from db.models import User, Country, Message, ChannelMessage, GroupMessages
 from decouple import config
 
 CHANNEL_ID = config('CHANNEL_ID')
+R_CHANNEL_ID = config('GROUP_ID')
+
+
+def get_group_messages(update: Update, context: CallbackContext):
+    all_msg = GroupMessages.objects.all()
+    for i in range(len(all_msg)):
+        message_id = all_msg[i].message_id
+        chat_id = context.user_data['chat_id']
+        try:
+            context.bot.forward_message(chat_id=chat_id, from_chat_id=R_CHANNEL_ID, message_id=message_id)
+        except Exception:
+            pass
 
 
 def start(update: Update, context: CallbackContext):
@@ -101,4 +113,6 @@ Davlat: <code>{country.icon} {country.name}</code></b>
                               longitude=last_msg.longitude)
     time.sleep(0.1)
     context.bot.send_photo(chat_id=update.effective_user.id, photo=last_msg.photo)
+    context.user_data['chat_id'] = update.effective_user.id
+    get_group_messages(update, context)
     return st.menu
