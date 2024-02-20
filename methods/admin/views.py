@@ -174,8 +174,11 @@ def send_rek_all_users(update: Update, context: CallbackContext):
     message_id = update.message.copy(R_CHANNEL_ID).message_id
     GroupMessages.objects.create(message_id=message_id)
     for user in User.objects.all():
-        update.message.copy(chat_id=user.chat_id)
-        counter += 1
+        try:
+            update.message.copy(chat_id=user.chat_id)
+            counter += 1
+        except:
+            pass
     all_user_count = User.objects.all().count()
     update.message.reply_html(
         text=f"<b>Reklama muvaffaqiyatli yuborildi! </b>    Aktivlar soni: {counter}, Barchasi: {all_user_count}",

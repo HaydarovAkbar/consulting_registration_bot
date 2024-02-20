@@ -101,7 +101,10 @@ Darajasi: <code>{context.user_data['level']}</code>
 Davlat: <code>{country.icon} {country.name}</code></b>
 --------------------------
 """
-    context.bot.send_message(chat_id=CHANNEL_ID, text=channel_msg, parse_mode="HTML")
+    try:
+        context.bot.send_message(chat_id=CHANNEL_ID, text=channel_msg, parse_mode="HTML")
+    except Exception:
+        pass
     time.sleep(0.4)
     last_msg = Message.objects.last()
     if last_msg.text:
